@@ -3,6 +3,7 @@
 ChatbotYsinhMocha - A Simple Interactive Chatbot
 """
 
+import random
 import re
 from datetime import datetime
 
@@ -41,12 +42,8 @@ class ChatbotYsinhMocha:
                 "I can chat with you! Try asking me about:\n- Greetings (hello, hi)\n- How I'm doing\n- My name\n- The time\n- Or just chat with me!",
                 "I'm here to chat! Ask me anything or just say hello!"
             ],
-            r'\b(time|what time)\b': [
-                f"The current time is {datetime.now().strftime('%H:%M:%S')}",
-            ],
-            r'\b(date|what.*date|today)\b': [
-                f"Today is {datetime.now().strftime('%A, %B %d, %Y')}",
-            ],
+            r'\b(time|what time)\b': 'time',
+            r'\b(date|what.*date|today)\b': 'date',
             r'\b(mocha|coffee)\b': [
                 "Mmm, I love mocha! ☕ It's the perfect blend of coffee and chocolate.",
                 "Mocha is my favorite! Rich, chocolatey, and energizing!"
@@ -70,11 +67,15 @@ class ChatbotYsinhMocha:
         # Check patterns
         for pattern, responses in self.patterns.items():
             if re.search(pattern, user_input_lower):
-                import random
-                return random.choice(responses)
+                # Handle special dynamic responses
+                if responses == 'time':
+                    return f"The current time is {datetime.now().strftime('%H:%M:%S')}"
+                elif responses == 'date':
+                    return f"Today is {datetime.now().strftime('%A, %B %d, %Y')}"
+                else:
+                    return random.choice(responses)
         
         # Default response
-        import random
         response = self.default_responses[self.response_counter % len(self.default_responses)]
         self.response_counter += 1
         return response
